@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PokemonApplication</string>
+    <string name="loading">Loading…</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="error_title">Error</string>
+    <string name="error_message">An error occurred: %1$s</string>
+    <string name="retry">Retry</string>
+</resources>

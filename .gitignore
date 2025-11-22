@@ -1,0 +1,40 @@
+# Android Studio / Gradle
+*.iml
+.gradle/
+**/build/
+local.properties
+
+# IntelliJ
+.idea/
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# macOS
+.DS_Store
+
+# Build outputs
+captures/
+externalNativeBuild/
+.cxx/
+
+# Generated files
+*.class
+*.dex
+*.apk
+*.ap_
+*.aab
+
+# Logs
+*.log
+
+# Keystore / secrets
+*.jks
+*.keystore
+key.properties
+
+# Other
+.gradle
