@@ -1,4 +1,4 @@
-package com.example.pokemonapplication.ui
+package com.example.pokemonapplication.ui.pokemonCard
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.example.pokemonapplication.domain.model.PokemonDetailModel

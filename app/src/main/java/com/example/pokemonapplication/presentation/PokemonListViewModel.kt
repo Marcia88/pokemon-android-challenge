@@ -6,6 +6,7 @@ import com.example.pokemonapplication.domain.model.PokemonListModel
 import com.example.pokemonapplication.domain.model.PokemonDetailModel
 import com.example.pokemonapplication.domain.usecases.GetPokemonList
 import com.example.pokemonapplication.domain.usecases.GetPokemonDetail
+import com.example.pokemonapplication.domain.usecases.SearchPokemonUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,20 +20,27 @@ import javax.inject.Inject
 
 sealed interface PokemonListIntent {
     object Load : PokemonListIntent
+    data class Search(val query: String) : PokemonListIntent
+    object LoadMore : PokemonListIntent
 }
 
 data class PokemonListState(
     val isLoading: Boolean = false,
+    val isLoadingMore: Boolean = false,
     val data: PokemonListModel? = null,
     val error: String? = null,
     val details: Map<String, PokemonDetailModel> = emptyMap(),
-    val detailsLoading: Set<String> = emptySet()
+    val detailsLoading: Set<String> = emptySet(),
+    val query: String = "",
+    val page: Int = 0,
+    val pageSize: Int = 20
 )
 
 @HiltViewModel
 class PokemonListViewModel @Inject constructor(
     private val getPokemonList: GetPokemonList,
-    private val getPokemonDetail: GetPokemonDetail
+    private val getPokemonDetail: GetPokemonDetail,
+    private val searchPokemon: SearchPokemonUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PokemonListState())
@@ -40,25 +48,105 @@ class PokemonListViewModel @Inject constructor(
 
     fun process(intent: PokemonListIntent) {
         when (intent) {
-            is PokemonListIntent.Load -> getPokemonList()
+            is PokemonListIntent.Load -> loadFirstPage()
+            is PokemonListIntent.Search -> search(intent.query)
+            is PokemonListIntent.LoadMore -> loadMore()
         }
     }
 
-    private fun getPokemonList() {
+    private fun loadFirstPage() {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isLoading = true, error = null)
-
-            getPokemonList.getPokemonList().collect { result ->
+            _state.value =
+                _state.value.copy(isLoading = true, isLoadingMore = false, error = null, page = 0)
+            val limit = _state.value.pageSize
+            getPokemonList.getPokemonList(limit, 0).collect { result ->
                 result.fold(
                     onSuccess = { data ->
-                        _state.value = PokemonListState(isLoading = false, data = data)
-                        preGetPokemonDetails(data.results.map { it.name }, parallelism = 4, limit = 10)
+                        _state.value =
+                            _state.value.copy(isLoading = false, isLoadingMore = false, data = data)
+                        preGetPokemonDetails(data.results.map { it.name }, limit)
                     }, onFailure = { throwable ->
                         _state.value = PokemonListState(
                             isLoading = false,
+                            isLoadingMore = false,
                             error = throwable.message ?: "Unknown error"
                         )
                     })
+            }
+        }
+    }
+
+    private fun search(query: String) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(
+                isLoading = true,
+                isLoadingMore = false,
+                error = null,
+                query = query,
+                page = 0
+            )
+            val limit = _state.value.pageSize
+            // If query is blank, load first page normally
+            if (query.isBlank()) {
+                loadFirstPage()
+                return@launch
+            }
+
+            val result = try {
+                searchPokemon.search(query, limit)
+            } catch (t: Throwable) {
+                Result.failure(t)
+            }
+
+            result.fold(onSuccess = { data ->
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    isLoadingMore = false,
+                    data = data
+                )
+                preGetPokemonDetails(data.results.map { it.name }, limit)
+            }, onFailure = { throwable ->
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    isLoadingMore = false,
+                    error = throwable.message ?: "Unknown error"
+                )
+            })
+        }
+    }
+
+    private fun loadMore() {
+        viewModelScope.launch {
+            // Prevent concurrent loadMore executions
+            if (_state.value.isLoadingMore) return@launch
+
+            val current = _state.value
+            val baseData = current.data ?: return@launch
+
+            if (current.query.isNotBlank().not()) {
+                val nextPage = current.page + 1
+                val limit = current.pageSize
+                val offset = nextPage * limit
+
+                // mark loading more in state
+                _state.value = _state.value.copy(isLoadingMore = true, error = null)
+                getPokemonList.getPokemonList(limit, offset).collect { result ->
+                    result.fold(onSuccess = { data ->
+                        // append results
+                        val combined = baseData.results + data.results
+                        _state.value = _state.value.copy(
+                            isLoadingMore = false,
+                            data = baseData.copy(results = combined),
+                            page = nextPage
+                        )
+                        preGetPokemonDetails(data.results.map { it.name }, limit)
+                    }, onFailure = { throwable ->
+                        _state.value = _state.value.copy(
+                            isLoadingMore = false,
+                            error = throwable.message ?: "Unknown error"
+                        )
+                    })
+                }
             }
         }
     }
@@ -86,7 +174,8 @@ class PokemonListViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun preGetPokemonDetails(names: List<String>, parallelism: Int = 4, limit: Int = 10) {
+    private fun preGetPokemonDetails(names: List<String>, limit: Int) {
+        val parallelism = 4
         viewModelScope.launch {
             names.asFlow()
                 .take(limit)

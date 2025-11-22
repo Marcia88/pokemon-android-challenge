@@ -5,4 +5,6 @@
     <string name="error_title">Error</string>
     <string name="error_message">Ha ocurrido un error: %1$s</string>
     <string name="retry">Reintentar</string>
+    <string name="search">Buscar</string>
+    <string name="load_more">Cargar más</string>
 </resources>

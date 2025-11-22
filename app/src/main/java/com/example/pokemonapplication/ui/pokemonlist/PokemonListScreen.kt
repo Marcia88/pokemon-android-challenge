@@ -5,16 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -30,16 +25,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.pokemonapplication.R
-import com.example.pokemonapplication.domain.model.PokemonModel
-import com.example.pokemonapplication.domain.model.PokemonDetailModel
 import com.example.pokemonapplication.presentation.PokemonListViewModel
 import com.example.pokemonapplication.presentation.PokemonListIntent
 import com.example.pokemonapplication.presentation.theme.PokemonApplicationTheme
-import com.example.pokemonapplication.ui.PokemonCard
-import com.example.pokemonapplication.ui.PokemonProvider
 
 @Composable
 fun PokemonListScreen(
@@ -52,28 +42,39 @@ fun PokemonListScreen(
         viewModel.process(PokemonListIntent.Load)
     }
 
-    Crossfade(targetState = state) { s ->
-        when {
-            s.isLoading || s.data == null -> {
-                LoadingView()
-            }
+    val screenMode = when {
+        state.isLoading || state.data == null -> ScreenMode.Loading
+        state.error != null -> ScreenMode.Error
+        else -> ScreenMode.Content
+    }
 
-            s.error != null -> {
-                ErrorView(s.error, onRetry = { viewModel.process(PokemonListIntent.Load) })
+    Crossfade(targetState = screenMode) { mode ->
+        when (mode) {
+            ScreenMode.Loading -> {
+                LoadingView(modifier)
             }
-
-            else -> {
-                val data = s.data
-                Column(modifier = modifier.fillMaxSize()) {
-                    DrawPokemonCarrousel(
-                        data.results,
-                        getCached = viewModel::getCachedPokemonDetail
-                    )
-                }
+            ScreenMode.Error -> {
+                ErrorView(
+                    modifier,
+                    state.error,
+                    onRetry = { viewModel.process(PokemonListIntent.Load) })
+            }
+            ScreenMode.Content -> {
+                PokemonListContent(
+                    modifier = modifier,
+                    onQueryChange = { viewModel.process(PokemonListIntent.Search(it)) },
+                    results = state.data!!.results,
+                    hasNext = state.data!!.next != null,
+                    isLoadingMore = state.isLoadingMore,
+                    onLoadMore = { viewModel.process(PokemonListIntent.LoadMore) },
+                    getCached = viewModel::getCachedPokemonDetail
+                )
             }
         }
     }
 }
+
+private enum class ScreenMode { Loading, Error, Content }
 
 @Composable
 fun LoadingView(modifier: Modifier = Modifier) {
@@ -107,7 +108,7 @@ fun LoadingView(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ErrorView(error: String?, onRetry: (() -> Unit)? = null) {
+fun ErrorView(modifier: Modifier = Modifier, error: String?, onRetry: (() -> Unit)? = null) {
     val unknown = stringResource(id = R.string.error_unknown)
 
     val displayed = if (error.isNullOrBlank()) {
@@ -117,7 +118,7 @@ fun ErrorView(error: String?, onRetry: (() -> Unit)? = null) {
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
             .semantics { contentDescription = displayed },
@@ -148,42 +149,11 @@ fun ErrorView(error: String?, onRetry: (() -> Unit)? = null) {
     }
 }
 
-@Composable
-fun DrawPokemonCarrousel(
-    results: List<PokemonModel>,
-    getCached: (String) -> PokemonDetailModel?,
-    modifier: Modifier = Modifier
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = PaddingValues(24.dp)
-    ) {
-        items(results) { pokemon ->
-            getCached(pokemon.name)?.let { PokemonCard(it) }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PokemonCarrouselPreview(@PreviewParameter(PokemonListProvider::class) pokemonList: List<PokemonModel>) {
-    PokemonApplicationTheme {
-        val provider = PokemonProvider()
-        val detailMap = provider.values.toList().associateBy { it.name }
-        DrawPokemonCarrousel(pokemonList, { name ->
-            detailMap[name] ?: provider.values.firstOrNull()
-        })
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun PokemonErrorPreview() {
     PokemonApplicationTheme {
-        ErrorView("Error")
+        ErrorView(error = "Error")
     }
 }
 

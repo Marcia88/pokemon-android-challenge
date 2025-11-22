@@ -13,8 +13,8 @@ class GetPokemonListImpl @Inject constructor(
     private val pokemonListRepository: PokemonListRepository
 ) : GetPokemonList {
 
-    override fun getPokemonList(): Flow<Result<PokemonListModel>> = flow {
-        val result = pokemonListRepository.getPokemonList(10, 0)
+    override fun getPokemonList(limit: Int, offset: Int): Flow<Result<PokemonListModel>> = flow {
+        val result = pokemonListRepository.getPokemonList(limit, offset)
         emit(result)
     }.flowOn(Dispatchers.IO)
 }
