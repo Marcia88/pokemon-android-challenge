@@ -1,26 +1,19 @@
-package com.example.pokemonapplication.presentation.ui.pokemonlist
+package com.example.pokemonapplication.presentation.ui.pokemon_list
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -28,9 +21,10 @@ import androidx.compose.ui.unit.dp
 import com.example.pokemonapplication.domain.model.PokemonDetailModel
 import com.example.pokemonapplication.domain.model.PokemonModel
 import com.example.pokemonapplication.presentation.theme.PokemonApplicationTheme
+import com.example.pokemonapplication.presentation.ui.pokemon_card.PokemonCard
+import com.example.pokemonapplication.presentation.ui.pokemon_card.PokemonProvider
+import com.example.pokemonapplication.presentation.ui.pokemon_card.ShimmerPokemonCard
 import com.example.pokemonapplication.presentation.ui.search.SearchBar
-import com.example.pokemonapplication.presentation.ui.pokemonCard.PokemonCard
-import com.example.pokemonapplication.presentation.ui.pokemonCard.PokemonProvider
 import kotlinx.coroutines.flow.collectLatest
 
 const val SKELETON_ITEMS = 20
@@ -45,7 +39,8 @@ fun PokemonListContent(
     hasNext: Boolean,
     isLoadingMore: Boolean,
     onLoadMore: () -> Unit,
-    getPokemonDetail: (String) -> PokemonDetailModel?
+    getPokemonDetail: (String) -> PokemonDetailModel?,
+    onItemClick: ((PokemonDetailModel) -> Unit)? = null
 ) {
 
     Scaffold(
@@ -60,9 +55,10 @@ fun PokemonListContent(
             }
         }
     ) { innerPadding ->
-       Box(modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
         ) {
             DrawPokemonGrid(
                 results = results,
@@ -70,21 +66,9 @@ fun PokemonListContent(
                 isLoadingMore = isLoadingMore,
                 getPokemonDetail = getPokemonDetail,
                 onLoadMore = onLoadMore,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                onItemClick = onItemClick
             )
-
-            if (isLoadingMore) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(48.dp),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
         }
     }
 }
@@ -96,7 +80,8 @@ fun DrawPokemonGrid(
     isLoadingMore: Boolean,
     getPokemonDetail: (String) -> PokemonDetailModel?,
     onLoadMore: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onItemClick: ((PokemonDetailModel) -> Unit)? = null
 ) {
     val gridState = rememberLazyGridState()
 
@@ -121,30 +106,32 @@ fun DrawPokemonGrid(
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(start = 24.dp, top = 0.dp, end = 24.dp, bottom = 0.dp)
     ) {
-        if (results.isEmpty()) {
-            // Show skeleton
-            items(count = SKELETON_ITEMS, key = { it }) { index ->
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn(tween(300 + index * 40))
-                ) {
-                    PokemonCard(null)
+        if (results.isNotEmpty()) {
+            itemsIndexed(results, key = { _, item -> item.name }) { _, pokemon ->
+                val detail = getPokemonDetail(pokemon.name)
+                PokemonCard(detail) {
+                    detail?.let { onItemClick?.invoke(it) }
+                }
+            }
+            if (isLoadingMore) {
+                items(count = 2, key = { "shimmer_${it}" }) { _ ->
+                    ShimmerPokemonCard(modifier = Modifier)
                 }
             }
         } else {
-            items(results, key = { it.name }) { pokemon ->
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn(tween(220))
-                ) {
-                    PokemonCard(getPokemonDetail(pokemon.name))
-                }
+            items(count = SKELETON_ITEMS, key = { it }) { _ ->
+                ShimmerPokemonCard(modifier = Modifier)
             }
         }
     }
 }
 
-private fun shouldLoadMore(hasNext: Boolean, isLoadingMore: Boolean, total: Int, atEnd: Boolean): Boolean {
+private fun shouldLoadMore(
+    hasNext: Boolean,
+    isLoadingMore: Boolean,
+    total: Int,
+    atEnd: Boolean
+): Boolean {
     return hasNext && !isLoadingMore && total > 0 && atEnd
 }
 

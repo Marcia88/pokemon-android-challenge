@@ -15,6 +15,30 @@ data class PokemonDetailResponse(
 
 @Serializable
 data class SpritesResponse(
+    @SerialName("front_default") val frontDefault: String? = null,
+    val other: OtherSpritesResponse? = null
+)
+
+@Serializable
+data class OtherSpritesResponse(
+    @SerialName("official-artwork") val officialArtwork: OfficialArtworkResponse? = null,
+    val home: HomeResponse? = null,
+    @SerialName("dream_world") val dreamWorld: DreamWorldResponse? = null
+)
+
+@Serializable
+data class OfficialArtworkResponse(
+    @SerialName("front_default") val frontDefault: String? = null
+)
+
+@Serializable
+data class HomeResponse(
+    @SerialName("front_default") val frontDefault: String? = null,
+    @SerialName("front_shiny") val frontShiny: String? = null
+)
+
+@Serializable
+data class DreamWorldResponse(
     @SerialName("front_default") val frontDefault: String? = null
 )
 
@@ -42,4 +66,3 @@ data class NamedResourceResponse(
     val name: String,
     val url: String
 )
-

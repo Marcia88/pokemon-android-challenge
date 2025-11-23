@@ -1,9 +1,7 @@
-package com.example.pokemonapplication.presentation.ui.pokemonlist
+package com.example.pokemonapplication.presentation.ui.pokemon_list
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,24 +9,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -37,15 +33,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pokemonapplication.R
-import com.example.pokemonapplication.presentation.PokemonListViewModel
+import com.example.pokemonapplication.domain.model.PokemonDetailModel
 import com.example.pokemonapplication.presentation.PokemonListIntent
+import com.example.pokemonapplication.presentation.PokemonListViewModel
 import com.example.pokemonapplication.presentation.theme.PokemonApplicationTheme
-import androidx.compose.foundation.shape.RoundedCornerShape
 
 @Composable
 fun PokemonListScreen(
     modifier: Modifier = Modifier,
-    viewModel: PokemonListViewModel
+    viewModel: PokemonListViewModel,
+    onItemClick: ((PokemonDetailModel) -> Unit)? = null
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -59,15 +56,11 @@ fun PokemonListScreen(
 
     val screenMode = when {
         state.error != null -> ScreenMode.Error
-        state.isLoading || state.data == null -> ScreenMode.Loading
         else -> ScreenMode.Content
     }
 
     Crossfade(targetState = screenMode) { mode ->
         when (mode) {
-            ScreenMode.Loading -> {
-                LoadingView(modifier)
-            }
             ScreenMode.Error -> {
                 ErrorView(
                     modifier,
@@ -85,7 +78,8 @@ fun PokemonListScreen(
                     hasNext = data?.next != null,
                     isLoadingMore = state.isLoadingMore,
                     onLoadMore = { viewModel.process(PokemonListIntent.LoadMore) },
-                    getPokemonDetail = viewModel::getPokemonDetail
+                    getPokemonDetail = viewModel::getPokemonDetail,
+                    onItemClick = onItemClick
                 )
             }
         }
@@ -131,38 +125,7 @@ fun DrawPopupPreview() {
     }
 }
 
-private enum class ScreenMode { Loading, Error, Content }
-
-@Composable
-fun LoadingView(modifier: Modifier = Modifier) {
-    val loadingText = stringResource(id = R.string.loading)
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.32f)),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(48.dp),
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = loadingText,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
-}
+private enum class ScreenMode { Error, Content }
 
 @Composable
 fun ErrorView(modifier: Modifier = Modifier, error: String?, onRetry: (() -> Unit)? = null) {
@@ -215,13 +178,5 @@ fun ErrorView(modifier: Modifier = Modifier, error: String?, onRetry: (() -> Uni
 fun PokemonErrorPreview() {
     PokemonApplicationTheme {
         ErrorView(error = "Error")
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PokemonLoadingPreview() {
-    PokemonApplicationTheme {
-        LoadingView()
     }
 }
