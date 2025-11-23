@@ -6,8 +6,12 @@ data class PokemonDetailModel(
     val imageUrl: String?,
     val types: List<TypeModel> = emptyList(),
     val abilities: List<String> = emptyList(),
+    val moves: List<String> = emptyList(),
     val stats: Map<String, Int> = emptyMap(),
-    val spritesModel: SpritesModel? = null
+    val spritesModel: SpritesModel? = null,
+    val species: String = "",
+    val height: Int = 0,
+    val weight: Int = 0
 )
 
 data class TypeModel(

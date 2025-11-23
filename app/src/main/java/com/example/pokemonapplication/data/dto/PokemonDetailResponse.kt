@@ -7,10 +7,14 @@ import kotlinx.serialization.Serializable
 data class PokemonDetailResponse(
     val id: Int,
     val name: String,
+    val height: Int,
+    val weight: Int,
+    val species: NamedResourceResponse,
     val sprites: SpritesResponse,
     val types: List<TypeSlotResponse> = emptyList(),
     val abilities: List<AbilitySlotResponse> = emptyList(),
-    val stats: List<StatSlotResponse> = emptyList()
+    val stats: List<StatSlotResponse> = emptyList(),
+    val moves: List<MoveSlotResponse> = emptyList()
 )
 
 @Serializable
@@ -51,14 +55,20 @@ data class TypeSlotResponse(
 @Serializable
 data class AbilitySlotResponse(
     val slot: Int,
+    @SerialName("is_hidden") val isHidden: Boolean = false,
     val ability: NamedResourceResponse
 )
 
 @Serializable
 data class StatSlotResponse(
-    val base_stat: Int,
+    @SerialName("base_stat") val baseStat: Int,
     val effort: Int,
     val stat: NamedResourceResponse
+)
+
+@Serializable
+data class MoveSlotResponse(
+    val move: NamedResourceResponse
 )
 
 @Serializable
