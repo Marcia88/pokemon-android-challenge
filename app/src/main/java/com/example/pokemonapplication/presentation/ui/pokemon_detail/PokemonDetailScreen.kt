@@ -3,16 +3,17 @@ package com.example.pokemonapplication.presentation.ui.pokemon_detail
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.pokemonapplication.domain.model.PokemonDetailModel
+import com.example.pokemonapplication.presentation.ui.pokemon_detail.tabs.PokemonDetailTabs
+import com.example.pokemonapplication.presentation.ui.pokemon_card.PokemonProvider
 
 @Composable
-fun PokemonDetail(
+fun PokemonDetailScreen(
     pokemonDetail: PokemonDetailModel?
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -24,10 +25,12 @@ fun PokemonDetail(
                 .height(240.dp)
         )
 
-        Text(
-            text = pokemonDetail?.name.orEmpty(),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(12.dp)
-        )
+        pokemonDetail?.let { PokemonDetailTabs(it) }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PokemonDetailScreenPreview(@PreviewParameter(PokemonProvider::class) pokemonDetail: PokemonDetailModel) {
+    PokemonDetailScreen(pokemonDetail = pokemonDetail)
 }

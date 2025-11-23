@@ -21,7 +21,8 @@ class PokemonDetailMapper @Inject constructor() {
             )
         }
         val abilities = response.abilities.sortedBy { it.slot }.map { it.ability.name }
-        val stats = response.stats.associate { it.stat.name to it.base_stat }
+        val stats = response.stats.associate { it.stat.name to it.baseStat }
+        val moves = response.moves.map { it.move.name }
 
         val other = response.sprites.other
         val domainOther = if (other != null) {
@@ -45,8 +46,12 @@ class PokemonDetailMapper @Inject constructor() {
             imageUrl = response.sprites.frontDefault,
             types = types,
             abilities = abilities,
+            moves = moves,
             stats = stats,
-            spritesModel = spritesModel
+            spritesModel = spritesModel,
+            species = response.species.name,
+            height = response.height,
+            weight = response.weight
         )
     }
 }

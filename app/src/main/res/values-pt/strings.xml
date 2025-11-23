@@ -8,4 +8,21 @@
     <string name="search">Pesquisar</string>
     <string name="load_more">Carregar mais</string>
     <string name="image_load_failed">Falha ao carregar</string>
+
+    <!-- About tab strings -->
+    <string name="about_title">Sobre</string>
+    <string name="label_species">Espécie:</string>
+    <string name="label_height">Altura:</string>
+    <string name="label_weight">Peso:</string>
+    <string name="label_abilities">Habilidades:</string>
+
+    <!-- Base stats tab strings -->
+    <string name="label_stats">Estatísticas:</string>
+    <string name="no_stats_available">Não há estatísticas disponíveis</string>
+    <string name="tab_base_stats">Estatísticas</string>
+
+    <!-- Moves tab strings -->
+    <string name="label_moves">Movimentos:</string>
+    <string name="no_moves_available">Não há movimentos disponíveis</string>
+    <string name="tab_moves">Movimentos</string>
 </resources>

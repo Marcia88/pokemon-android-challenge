@@ -114,7 +114,12 @@ fun ImageCarouselContent(
                         .size(size)
                         .clickable { scope.launch { pagerState.animateScrollToPage(index) } }
                         .background(
-                            color = if (selected) MaterialTheme.colorScheme.primary else Color.Gray,
+                            color = if (selected) {
+                                pokemonDetail?.types?.firstOrNull()?.type?.backgroundColor()
+                                    ?: MaterialTheme.colorScheme.primary
+                            } else {
+                                Color.Gray
+                            },
                             shape = CircleShape
                         )
                 )

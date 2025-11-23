@@ -1,11 +1,28 @@
 <resources>
     <string name="app_name">PokemonApplication</string>
-    <string name="loading">Cargando…</string>
-    <string name="error_unknown">Error desconocido</string>
+    <string name="loading">Loading…</string>
+    <string name="error_unknown">Unknown error</string>
     <string name="error_title">Error</string>
-    <string name="error_message">Ha ocurrido un error: %1$s</string>
-    <string name="retry">Reintentar</string>
-    <string name="search">Buscar</string>
-    <string name="load_more">Cargar más</string>
+    <string name="error_message">An error occurred: %1$s</string>
+    <string name="retry">Retry</string>
+    <string name="search">Search</string>
+    <string name="load_more">Load more</string>
     <string name="image_load_failed">Failed to load</string>
+
+    <!-- About tab strings -->
+    <string name="about_title">About</string>
+    <string name="label_species">Species:</string>
+    <string name="label_height">Height:</string>
+    <string name="label_weight">Weight:</string>
+    <string name="label_abilities">Abilities:</string>
+
+    <!-- Base stats tab strings -->
+    <string name="label_stats">Stats:</string>
+    <string name="no_stats_available">No stats available</string>
+    <string name="tab_base_stats">Base Stats</string>
+
+    <!-- Moves tab strings -->
+    <string name="label_moves">Moves:</string>
+    <string name="no_moves_available">No moves available</string>
+    <string name="tab_moves">Moves</string>
 </resources>
