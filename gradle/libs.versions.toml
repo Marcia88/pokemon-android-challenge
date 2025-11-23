@@ -1,7 +1,6 @@
 [versions]
 agp = "8.7.3"
-kotlin = "1.9.22"
-composePlugin = "1.7.0"
+kotlin = "2.0.10"
 coil = "2.6.0"
 coreKtx = "1.12.0"
 junit = "4.13.2"
@@ -11,9 +10,10 @@ lifecycleRuntimeKtx = "2.6.2"
 activityCompose = "1.10.1"
 composeBom = "2024.09.00"
 ktor = "2.3.5"
-kotlinxSerialization = "1.6.0"
+kotlinxSerialization = "1.6.3"
 hilt = "2.51.1"
-hiltNavigationCompose = "1.2.0"
+room = "2.7.0"
+ksp = "2.0.10-1.0.24"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,15 +45,17 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # Hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
-androidxHiltNavigationCompose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+
+# Room
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-
-# Add kotlin-compose alias used by the app plugin block (accessed as libs.plugins.kotlin.compose)
-kotlin-compose = { id = "org.jetbrains.compose", version.ref = "composePlugin" }
+kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

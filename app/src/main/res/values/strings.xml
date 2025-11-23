@@ -7,4 +7,5 @@
     <string name="retry">Reintentar</string>
     <string name="search">Buscar</string>
     <string name="load_more">Cargar más</string>
+    <string name="image_load_failed">Failed to load</string>
 </resources>

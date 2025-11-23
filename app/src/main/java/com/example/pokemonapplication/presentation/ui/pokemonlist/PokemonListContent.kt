@@ -1,7 +1,11 @@
-package com.example.pokemonapplication.ui.pokemonlist
+package com.example.pokemonapplication.presentation.ui.pokemonlist
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,29 +28,36 @@ import androidx.compose.ui.unit.dp
 import com.example.pokemonapplication.domain.model.PokemonDetailModel
 import com.example.pokemonapplication.domain.model.PokemonModel
 import com.example.pokemonapplication.presentation.theme.PokemonApplicationTheme
-import com.example.pokemonapplication.ui.SearchBar
-import com.example.pokemonapplication.ui.pokemonCard.PokemonCard
-import com.example.pokemonapplication.ui.pokemonCard.PokemonProvider
+import com.example.pokemonapplication.presentation.ui.search.SearchBar
+import com.example.pokemonapplication.presentation.ui.pokemonCard.PokemonCard
+import com.example.pokemonapplication.presentation.ui.pokemonCard.PokemonProvider
 import kotlinx.coroutines.flow.collectLatest
+
+const val SKELETON_ITEMS = 20
 
 @Composable
 fun PokemonListContent(
     modifier: Modifier = Modifier,
     query: String = "",
     onQueryChange: (String) -> Unit,
+    onSearch: ((String) -> Unit)? = null,
     results: List<PokemonModel>,
     hasNext: Boolean,
     isLoadingMore: Boolean,
     onLoadMore: () -> Unit,
-    getCached: (String) -> PokemonDetailModel?
+    getPokemonDetail: (String) -> PokemonDetailModel?
 ) {
+
     Scaffold(
         modifier = modifier,
         topBar = {
-            SearchBar(
-                value = query,
-                onValueChange = { onQueryChange(it) }
-            )
+            Column {
+                SearchBar(
+                    value = query,
+                    onValueChange = { onQueryChange(it) },
+                    onSearch = onSearch
+                )
+            }
         }
     ) { innerPadding ->
        Box(modifier = Modifier
@@ -57,7 +68,7 @@ fun PokemonListContent(
                 results = results,
                 hasNext = hasNext,
                 isLoadingMore = isLoadingMore,
-                getCached = getCached,
+                getPokemonDetail = getPokemonDetail,
                 onLoadMore = onLoadMore,
                 modifier = Modifier.fillMaxSize()
             )
@@ -83,7 +94,7 @@ fun DrawPokemonGrid(
     results: List<PokemonModel>,
     hasNext: Boolean,
     isLoadingMore: Boolean,
-    getCached: (String) -> PokemonDetailModel?,
+    getPokemonDetail: (String) -> PokemonDetailModel?,
     onLoadMore: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -110,9 +121,25 @@ fun DrawPokemonGrid(
         horizontalArrangement = Arrangement.spacedBy(24.dp),
         contentPadding = PaddingValues(start = 24.dp, top = 0.dp, end = 24.dp, bottom = 0.dp)
     ) {
-        items(results, key = { it.name }) { pokemon ->
-            val cached = getCached(pokemon.name)
-            PokemonCard(cached)
+        if (results.isEmpty()) {
+            // Show skeleton
+            items(count = SKELETON_ITEMS, key = { it }) { index ->
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(tween(300 + index * 40))
+                ) {
+                    PokemonCard(null)
+                }
+            }
+        } else {
+            items(results, key = { it.name }) { pokemon ->
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(tween(220))
+                ) {
+                    PokemonCard(getPokemonDetail(pokemon.name))
+                }
+            }
         }
     }
 }
@@ -132,11 +159,12 @@ fun PokemonListContentPreview(@PreviewParameter(PokemonListProvider::class) poke
             modifier = Modifier,
             query = "",
             onQueryChange = {},
+            onSearch = {},
             results = pokemonList,
             hasNext = true,
             isLoadingMore = false,
             onLoadMore = {},
-            getCached = { name -> detailMap[name] ?: provider.values.firstOrNull() }
+            getPokemonDetail = { name -> detailMap[name] ?: provider.values.firstOrNull() }
         )
     }
 }
