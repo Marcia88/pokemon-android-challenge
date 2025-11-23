@@ -1,7 +1,9 @@
-package com.example.pokemonapplication.presentation.ui.pokemonCard
+package com.example.pokemonapplication.presentation.ui.pokemon_card
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.example.pokemonapplication.domain.model.PokemonDetailModel
+import com.example.pokemonapplication.domain.model.TypeModel
+import com.example.pokemonapplication.domain.model.PokemonType
 
 class PokemonProvider : PreviewParameterProvider<PokemonDetailModel> {
     override val values: Sequence<PokemonDetailModel>
@@ -10,7 +12,10 @@ class PokemonProvider : PreviewParameterProvider<PokemonDetailModel> {
                 id = 1,
                 name = "bulbasaur",
                 imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
-                types = listOf("grass", "poison"),
+                types = listOf(
+                    TypeModel(name = "grass", type = PokemonType.fromString("grass")),
+                    TypeModel(name = "poison", type = PokemonType.fromString("poison"))
+                ),
                 abilities = listOf("overgrow", "chlorophyll"),
                 stats = mapOf(
                     "hp" to 45,
@@ -25,7 +30,10 @@ class PokemonProvider : PreviewParameterProvider<PokemonDetailModel> {
                 id = 2,
                 name = "ivysaur",
                 imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png",
-                types = listOf("grass", "poison"),
+                types = listOf(
+                    TypeModel(name = "grass", type = PokemonType.fromString("grass")),
+                    TypeModel(name = "poison", type = PokemonType.fromString("poison"))
+                ),
                 abilities = listOf("overgrow", "chlorophyll"),
                 stats = mapOf(
                     "hp" to 60,
@@ -40,7 +48,7 @@ class PokemonProvider : PreviewParameterProvider<PokemonDetailModel> {
                 id = 3,
                 name = "venusaur",
                 imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png",
-                types = listOf("grass", "poison"),
+                types = listOf(TypeModel(name = "fire", type = PokemonType.fromString("fire"))),
                 abilities = listOf("overgrow", "chlorophyll"),
                 stats = mapOf(
                     "hp" to 80,
@@ -55,7 +63,7 @@ class PokemonProvider : PreviewParameterProvider<PokemonDetailModel> {
                 id = 4,
                 name = "charmander",
                 imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png",
-                types = listOf("fire"),
+                types = listOf(TypeModel(name = "fire", type = PokemonType.fromString("fire"))),
                 abilities = listOf("blaze", "solar-power"),
                 stats = mapOf(
                     "hp" to 39,

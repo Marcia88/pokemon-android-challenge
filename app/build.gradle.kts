@@ -51,6 +51,9 @@ dependencies {
 
     implementation(libs.coil.compose)
 
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
     // Ktor
     implementation(libs.io.ktor.client.core)
     implementation(libs.io.ktor.client.okhttp)
