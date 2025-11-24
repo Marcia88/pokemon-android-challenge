@@ -17,6 +17,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.example.pokemonapplication.presentation.theme.PokemonApplicationTheme
 
 @Composable
@@ -48,6 +50,7 @@ fun ShimmerPokemonCard(modifier: Modifier = Modifier) {
             .size(150.dp)
             .background(brush = brush, shape = RoundedCornerShape(20.dp))
             .padding(8.dp)
+            .semantics { contentDescription = "shimmer_skeleton" }
     )
 }
 
