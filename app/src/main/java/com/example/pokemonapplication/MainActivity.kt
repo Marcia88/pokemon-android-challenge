@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.pokemonapplication.presentation.ui.pokemon_list.PokemonListScreen
 import com.example.pokemonapplication.presentation.PokemonListViewModel
 import com.example.pokemonapplication.presentation.theme.PokemonApplicationTheme
@@ -22,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.pokemonapplication.presentation.ui.pokemon_detail.PokemonDetailScreen
 import com.example.pokemonapplication.domain.model.PokemonDetailModel
+import com.example.pokemonapplication.presentation.FavoritePokemons
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -35,8 +37,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = "list",
-                        modifier = Modifier.padding(innerPadding)
+                        startDestination = "list"
                     ) {
                         composable("list") {
                             PokemonListScreen(
@@ -45,6 +46,9 @@ class MainActivity : ComponentActivity() {
                                 onItemClick = { detail: PokemonDetailModel ->
                                     val name = detail.name
                                     navController.navigate("detail/${name}")
+                                },
+                                onNavigateToFavorites = {
+                                    navController.navigate("favorites")
                                 }
                             )
                         }
@@ -55,7 +59,14 @@ class MainActivity : ComponentActivity() {
                         ) { backStackEntry ->
                             val name = backStackEntry.arguments?.getString("name")
                             val detail = vm.getPokemonDetail(name.orEmpty())
-                            PokemonDetailScreen(pokemonDetail = detail)
+                            PokemonDetailScreen(pokemonDetail = detail, navController = navController)
+                        }
+
+                        composable("favorites") {
+                            FavoritePokemons(
+                                modifier = Modifier.padding(innerPadding),
+                                navController = navController,
+                            )
                         }
                     }
                 }

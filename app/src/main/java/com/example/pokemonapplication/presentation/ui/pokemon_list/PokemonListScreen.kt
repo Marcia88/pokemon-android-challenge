@@ -37,12 +37,14 @@ import com.example.pokemonapplication.domain.model.PokemonDetailModel
 import com.example.pokemonapplication.presentation.PokemonListIntent
 import com.example.pokemonapplication.presentation.PokemonListViewModel
 import com.example.pokemonapplication.presentation.theme.PokemonApplicationTheme
+import com.example.pokemonapplication.presentation.ui.PokeballFloatingActionButton
 
 @Composable
 fun PokemonListScreen(
     modifier: Modifier = Modifier,
     viewModel: PokemonListViewModel,
-    onItemClick: ((PokemonDetailModel) -> Unit)? = null
+    onItemClick: ((PokemonDetailModel) -> Unit)? = null,
+    onNavigateToFavorites: (() -> Unit)? = null
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -79,7 +81,10 @@ fun PokemonListScreen(
                     isLoadingMore = state.isLoadingMore,
                     onLoadMore = { viewModel.process(PokemonListIntent.LoadMore) },
                     getPokemonDetail = viewModel::getPokemonDetail,
-                    onItemClick = onItemClick
+                    onItemClick = onItemClick,
+                    floatingActionButton = {
+                        PokeballFloatingActionButton(onClick = { onNavigateToFavorites?.invoke() })
+                    }
                 )
             }
         }

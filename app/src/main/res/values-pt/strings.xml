@@ -25,4 +25,9 @@
     <string name="label_moves">Movimentos:</string>
     <string name="no_moves_available">Não há movimentos disponíveis</string>
     <string name="tab_moves">Movimentos</string>
+
+    <!-- Favoritos -->
+    <string name="add_to_favorites">Adicionar aos favoritos</string>
+    <string name="remove_from_favorites">Remover dos meus favoritos</string>
+    <string name="favorites">Favoritos</string>
 </resources>
