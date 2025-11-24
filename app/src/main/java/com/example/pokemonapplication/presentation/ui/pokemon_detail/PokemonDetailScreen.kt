@@ -6,43 +6,51 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.Text
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.pokemonapplication.R
 import com.example.pokemonapplication.domain.model.PokemonDetailModel
-import com.example.pokemonapplication.presentation.ui.pokemon_detail.tabs.PokemonDetailTabs
 import com.example.pokemonapplication.presentation.ui.pokemon_card.PokemonProvider
+import com.example.pokemonapplication.presentation.ui.pokemon_detail.tabs.PokemonDetailTabs
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokemonDetailScreen(
     pokemonDetail: PokemonDetailModel?,
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: PokemonDetailViewModel = hiltViewModel()
 ) {
     val activity = LocalContext.current as? Activity
     val title = stringResource(id = R.string.pokemon_details_title)
@@ -54,6 +62,20 @@ fun PokemonDetailScreen(
     }
 
     var isFavorite by rememberSaveable { mutableStateOf(false) }
+    val inspection = LocalInspectionMode.current
+    val scope = rememberCoroutineScope()
+
+    if (inspection && pokemonDetail != null) {
+        isFavorite = false
+    } else {
+        LaunchedEffect(pokemonDetail) {
+            pokemonDetail?.let { p ->
+                viewModel.isFavoriteFlow(p.id).collect { fav ->
+                    isFavorite = fav
+                }
+            }
+        }
+    }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         TopAppBar(
@@ -73,7 +95,14 @@ fun PokemonDetailScreen(
             actions = {
                 FavoriteToggle(
                     isFavorite = isFavorite,
-                    onToggle = { isFavorite = !isFavorite }
+                    onToggle = {
+                        pokemonDetail?.let { p ->
+                            scope.launch { viewModel.toggleFavorite(p.id, p.name) }
+                        }
+                    },
+                    color = pokemonDetail?.types?.firstOrNull()?.type?.backgroundColor() ?:
+                    colorResource(R.color.pokemon_type_fighting)
+
                 )
 
                 ShareButton(pokemonDetail = pokemonDetail)
@@ -95,7 +124,8 @@ fun PokemonDetailScreen(
 @Composable
 fun FavoriteToggle(
     isFavorite: Boolean,
-    onToggle: () -> Unit
+    onToggle: () -> Unit,
+    color: Color
 ) {
     val favText = if (isFavorite) {
         stringResource(id = R.string.remove_from_favorites)
@@ -115,7 +145,7 @@ fun FavoriteToggle(
     ) {
         IconButton(onClick = onToggle) {
             val favIcon = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
-            Icon(imageVector = favIcon, contentDescription = favText)
+            Icon(imageVector = favIcon, contentDescription = favText, tint = color)
         }
     }
 }
@@ -125,7 +155,6 @@ fun FavoriteToggle(
 fun ShareButton(
     pokemonDetail: PokemonDetailModel?
 ) {
-
     val context = LocalContext.current
     val shareTooltipText = stringResource(id = R.string.share_action)
     val shareTooltipState = rememberTooltipState()

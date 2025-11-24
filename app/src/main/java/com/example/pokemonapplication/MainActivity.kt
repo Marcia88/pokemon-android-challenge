@@ -9,13 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.example.pokemonapplication.presentation.ui.pokemon_list.PokemonListScreen
 import com.example.pokemonapplication.presentation.PokemonListViewModel
 import com.example.pokemonapplication.presentation.theme.PokemonApplicationTheme
 import dagger.hilt.android.AndroidEntryPoint
-
-// Navigation imports
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,7 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.pokemonapplication.presentation.ui.pokemon_detail.PokemonDetailScreen
 import com.example.pokemonapplication.domain.model.PokemonDetailModel
-import com.example.pokemonapplication.presentation.FavoritePokemons
+import com.example.pokemonapplication.presentation.FavoritePokemonsScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -63,9 +60,9 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("favorites") {
-                            FavoritePokemons(
-                                modifier = Modifier.padding(innerPadding),
+                            FavoritePokemonsScreen(
                                 navController = navController,
+                                viewModel = vm,
                             )
                         }
                     }

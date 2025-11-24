@@ -37,4 +37,5 @@
     <string name="add_to_favorites">Add to favorites</string>
     <string name="remove_from_favorites">Remove from my favorites</string>
     <string name="favorites">Favorites</string>
+    <string name="favorites_empty_message">No favorite Pokémon found or details not loaded yet.</string>
 </resources>

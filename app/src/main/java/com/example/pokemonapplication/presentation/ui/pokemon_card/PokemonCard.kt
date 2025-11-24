@@ -58,7 +58,7 @@ fun PokemonCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null
 ) {
-    val imageUrl = pokemonDetail?.imageUrl
+    val imageUrl = pokemonDetail?.spritesModel?.other?.dreamWorldModel?.frontDefault
     var showTitle by remember(imageUrl) { mutableStateOf(false) }
 
     val pokemonName = pokemonDetail?.name

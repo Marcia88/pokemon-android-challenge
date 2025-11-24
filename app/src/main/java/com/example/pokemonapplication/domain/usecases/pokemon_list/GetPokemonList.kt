@@ -1,4 +1,4 @@
-package com.example.pokemonapplication.domain.usecases
+package com.example.pokemonapplication.domain.usecases.pokemon_list
 
 import com.example.pokemonapplication.domain.model.PokemonListModel
 import kotlin.Result

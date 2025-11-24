@@ -6,20 +6,28 @@ import com.example.pokemonapplication.data.datasources.PokemonDetailService
 import com.example.pokemonapplication.data.datasources.PokemonDetailServiceImpl
 import com.example.pokemonapplication.data.datasources.PokemonListService
 import com.example.pokemonapplication.data.datasources.PokemonListServiceImpl
+import com.example.pokemonapplication.data.local.FavouriteDatabase
 import com.example.pokemonapplication.data.local.SearchDatabase
+import com.example.pokemonapplication.data.local.dao.FavoriteDao
 import com.example.pokemonapplication.data.local.dao.SearchDao
 import com.example.pokemonapplication.data.mapper.PokemonDetailMapper
 import com.example.pokemonapplication.data.mapper.PokemonListMapper
 import com.example.pokemonapplication.data.repositories.detail.PokemonDetailRemoteRepository
 import com.example.pokemonapplication.data.repositories.detail.PokemonDetailRepository
+import com.example.pokemonapplication.data.repositories.favorite.FavoriteLocalRepository
+import com.example.pokemonapplication.data.repositories.favorite.FavoriteRepository
 import com.example.pokemonapplication.data.repositories.pokemonlist.PokemonListRemoteRepository
 import com.example.pokemonapplication.data.repositories.pokemonlist.PokemonListRepository
 import com.example.pokemonapplication.data.repositories.search.SearchCacheRepository
 import com.example.pokemonapplication.data.repositories.search.SearchCacheRepositoryImpl
-import com.example.pokemonapplication.domain.usecases.GetPokemonDetail
-import com.example.pokemonapplication.domain.usecases.GetPokemonDetailImpl
-import com.example.pokemonapplication.domain.usecases.GetPokemonList
-import com.example.pokemonapplication.domain.usecases.GetPokemonListImpl
+import com.example.pokemonapplication.domain.usecases.favovorite.FavoritesUseCaseImpl
+import com.example.pokemonapplication.domain.usecases.favovorite.FavoritesUseCase
+import com.example.pokemonapplication.domain.usecases.pokemon_detail.GetPokemonDetail
+import com.example.pokemonapplication.domain.usecases.pokemon_detail.GetPokemonDetailImpl
+import com.example.pokemonapplication.domain.usecases.pokemon_list.GetPokemonList
+import com.example.pokemonapplication.domain.usecases.pokemon_list.GetPokemonListImpl
+import com.example.pokemonapplication.domain.usecases.search.SearchPokemonUseCase
+import com.example.pokemonapplication.domain.usecases.search.SearchPokemonUseCaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -68,9 +76,24 @@ abstract class AppModule {
     ): GetPokemonDetail
 
     @Binds
+    abstract fun bindSearchPokemonUseCase(
+        impl: SearchPokemonUseCaseImpl
+    ): SearchPokemonUseCase
+
+    @Binds
     abstract fun bindSearchCacheRepository(
         impl: SearchCacheRepositoryImpl
     ): SearchCacheRepository
+
+    @Binds
+    abstract fun bindFavoritesUseCase(
+        impl: FavoritesUseCaseImpl
+    ): FavoritesUseCase
+
+    @Binds
+    abstract fun bindFavoriteRepository(
+        impl: FavoriteLocalRepository
+    ): FavoriteRepository
 
     companion object {
         @Provides
@@ -98,5 +121,20 @@ abstract class AppModule {
         @Provides
         @Singleton
         fun provideSearchDao(db: SearchDatabase): SearchDao = db.searchDao()
+
+        @Provides
+        @Singleton
+        fun provideFavouriteDatabase(@ApplicationContext context: Context): FavouriteDatabase {
+            return Room.databaseBuilder(context, FavouriteDatabase::class.java, "favorite_pokemon.db").build()
+        }
+
+        @Provides
+        @Singleton
+        fun provideFavoriteDao(db: FavouriteDatabase): FavoriteDao = db.favoriteDao()
+
+        @Provides
+        @Singleton
+        @IoDispatcher
+        fun provideIoDispatcher(): kotlinx.coroutines.CoroutineDispatcher = kotlinx.coroutines.Dispatchers.IO
     }
 }

@@ -109,7 +109,9 @@ fun DrawPokemonGrid(
         contentPadding = PaddingValues(start = 24.dp, top = 0.dp, end = 24.dp, bottom = 0.dp)
     ) {
         if (results.isNotEmpty()) {
-            itemsIndexed(results, key = { _, item -> item.name }) { _, pokemon ->
+            itemsIndexed(
+                results, key = { _, item -> item.name },
+                contentType = { _, _ -> "pokemon" }) { _, pokemon ->
                 val detail = getPokemonDetail(pokemon.name)
                 PokemonCard(detail) {
                     detail?.let { onItemClick?.invoke(it) }

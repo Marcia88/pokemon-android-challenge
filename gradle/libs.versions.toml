@@ -15,6 +15,8 @@ hilt = "2.51.1"
 room = "2.7.0"
 ksp = "2.0.10-1.0.24"
 nav_compose = "2.8.2"
+hilt_navigation_compose = "1.2.0"
+material3 = "1.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +37,7 @@ androidx-compose-foundation = { group = "androidx.compose.foundation", name = "f
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 
 io-ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 io-ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
@@ -46,6 +49,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # Hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt_navigation_compose" }
 
 # Room
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -54,6 +58,7 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 
 # Navigation Compose
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "nav_compose" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
