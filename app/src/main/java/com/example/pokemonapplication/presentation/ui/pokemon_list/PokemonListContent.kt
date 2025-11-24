@@ -40,7 +40,8 @@ fun PokemonListContent(
     isLoadingMore: Boolean,
     onLoadMore: () -> Unit,
     getPokemonDetail: (String) -> PokemonDetailModel?,
-    onItemClick: ((PokemonDetailModel) -> Unit)? = null
+    onItemClick: ((PokemonDetailModel) -> Unit)? = null,
+    floatingActionButton: (@Composable () -> Unit)? = null
 ) {
 
     Scaffold(
@@ -53,7 +54,8 @@ fun PokemonListContent(
                     onSearch = onSearch
                 )
             }
-        }
+        },
+        floatingActionButton = floatingActionButton ?: {}
     ) { innerPadding ->
         Box(
             modifier = Modifier

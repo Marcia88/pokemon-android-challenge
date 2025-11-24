@@ -1,28 +1,40 @@
 <resources>
-<string name="app_name">PokemonApplication</string>
-<string name="loading">Cargando…</string>
-<string name="error_unknown">Error desconocido</string>
-<string name="error_title">Error</string>
-<string name="error_message">Ha ocurrido un error: %1$s</string>
-<string name="retry">Reintentar</string>
-<string name="search">Buscar</string>
-<string name="load_more">Cargar más</string>
-<string name="image_load_failed">Failed to load</string>
+    <string name="app_name">PokemonApplication</string>
+    <string name="loading">Cargando…</string>
+    <string name="error_unknown">Error desconocido</string>
+    <string name="error_title">Error</string>
+    <string name="error_message">Ha ocurrido un error: %1$s</string>
+    <string name="retry">Reintentar</string>
+    <string name="search">Buscar</string>
+    <string name="load_more">Cargar más</string>
+    <string name="image_load_failed">Failed to load</string>
 
-<!-- About tab strings -->
-<string name="about_title">Acerca de</string>
-<string name="label_species">Especie:</string>
-<string name="label_height">Altura:</string>
-<string name="label_weight">Peso:</string>
-<string name="label_abilities">Habilidades:</string>
+    <!-- About tab strings -->
+    <string name="about_title">Acerca de</string>
+    <string name="label_species">Especie:</string>
+    <string name="label_height">Altura:</string>
+    <string name="label_weight">Peso:</string>
+    <string name="label_abilities">Habilidades:</string>
 
-<!-- Base stats tab strings -->
-<string name="label_stats">Estadísticas:</string>
-<string name="no_stats_available">No hay estadísticas disponibles</string>
-<string name="tab_base_stats">Estadísticas</string>
+    <!-- Base stats tab strings -->
+    <string name="label_stats">Estadísticas:</string>
+    <string name="no_stats_available">No hay estadísticas disponibles</string>
+    <string name="tab_base_stats">Estadísticas</string>
 
-<!-- Moves tab strings -->
-<string name="label_moves">Movimientos:</string>
-<string name="no_moves_available">No hay movimientos disponibles</string>
-<string name="tab_moves">Movimientos</string>
+    <!-- Moves tab strings -->
+    <string name="label_moves">Movimientos:</string>
+    <string name="no_moves_available">No hay movimientos disponibles</string>
+    <string name="tab_moves">Movimientos</string>
+
+    <!-- Pokemon detail screen -->
+    <string name="pokemon_details_title">Detalles del Pokémon</string>
+
+    <!-- Share action -->
+    <string name="share_action">Compartir</string>
+    <string name="share_text_template">Mira a %1$s! Más detalles: %2$s</string>
+
+    <!-- Favorites actions -->
+    <string name="add_to_favorites">Agregar a favoritos</string>
+    <string name="remove_from_favorites">Eliminar de mis favoritos</string>
+    <string name="favorites">Favoritos</string>
 </resources>
