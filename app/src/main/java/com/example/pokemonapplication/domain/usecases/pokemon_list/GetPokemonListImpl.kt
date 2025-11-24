@@ -1,4 +1,4 @@
-package com.example.pokemonapplication.domain.usecases
+package com.example.pokemonapplication.domain.usecases.pokemon_list
 
 import com.example.pokemonapplication.data.repositories.pokemonlist.PokemonListRepository
 import com.example.pokemonapplication.domain.model.PokemonListModel
@@ -7,14 +7,16 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.Dispatchers
+import com.example.pokemonapplication.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 
 class GetPokemonListImpl @Inject constructor(
-    private val pokemonListRepository: PokemonListRepository
+    private val pokemonListRepository: PokemonListRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : GetPokemonList {
 
     override fun getPokemonList(limit: Int, offset: Int): Flow<Result<PokemonListModel>> = flow {
         val result = pokemonListRepository.getPokemonList(limit, offset)
         emit(result)
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(ioDispatcher)
 }

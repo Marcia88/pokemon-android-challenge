@@ -6,9 +6,10 @@ import com.example.pokemonapplication.data.ErrorMapper
 import com.example.pokemonapplication.domain.model.PokemonDetailModel
 import com.example.pokemonapplication.domain.model.PokemonListModel
 import com.example.pokemonapplication.domain.model.PokemonModel
-import com.example.pokemonapplication.domain.usecases.GetPokemonDetail
-import com.example.pokemonapplication.domain.usecases.GetPokemonList
-import com.example.pokemonapplication.domain.usecases.SearchPokemonUseCase
+import com.example.pokemonapplication.domain.usecases.pokemon_detail.GetPokemonDetail
+import com.example.pokemonapplication.domain.usecases.pokemon_list.GetPokemonList
+import com.example.pokemonapplication.domain.usecases.search.SearchPokemonUseCase
+import com.example.pokemonapplication.domain.usecases.favovorite.FavoritesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,11 +46,14 @@ data class PokemonListState(
 class PokemonListViewModel @Inject constructor(
     private val getPokemonList: GetPokemonList,
     private val getPokemonDetail: GetPokemonDetail,
-    private val searchPokemonUseCase: SearchPokemonUseCase
+    private val searchPokemonUseCase: SearchPokemonUseCase,
+    private val favoritesUseCase: FavoritesUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PokemonListState())
     val state: StateFlow<PokemonListState> = _state
+
+    val favoritesFlow = favoritesUseCase.getFavoritesFlow()
 
     fun process(intent: PokemonListIntent) {
         when (intent) {

@@ -37,4 +37,5 @@
     <string name="add_to_favorites">Agregar a favoritos</string>
     <string name="remove_from_favorites">Eliminar de mis favoritos</string>
     <string name="favorites">Favoritos</string>
+    <string name="favorites_empty_message">No se encontraron Pokémon favoritos o los detalles aún no se han cargado.</string>
 </resources>

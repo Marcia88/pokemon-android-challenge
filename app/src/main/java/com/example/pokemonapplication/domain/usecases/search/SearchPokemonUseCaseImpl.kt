@@ -1,8 +1,9 @@
-package com.example.pokemonapplication.domain.usecases
+package com.example.pokemonapplication.domain.usecases.search
 
 import com.example.pokemonapplication.domain.model.PokemonListModel
 import com.example.pokemonapplication.domain.model.PokemonModel
 import com.example.pokemonapplication.data.repositories.search.SearchCacheRepository
+import com.example.pokemonapplication.domain.usecases.pokemon_list.GetPokemonList
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -11,11 +12,10 @@ import kotlinx.coroutines.flow.first
 
 const val MAX_ATTEMPTS = 2
 
-class SearchPokemonUseCase @Inject constructor(
+class SearchPokemonUseCaseImpl @Inject constructor(
     private val getPokemonList: GetPokemonList,
     private val cacheRepository: SearchCacheRepository
-) {
-    // Remove all whitespace and lowercase
+) : SearchPokemonUseCase {
     private fun toNoSpacesLowercaseKey(query: String) =
         query.trim().lowercase().replace("\\s+".toRegex(), "")
 
@@ -34,10 +34,10 @@ class SearchPokemonUseCase @Inject constructor(
         cacheRepository.getCachedResult(key)
     } catch (_: Exception) { null }
 
-    fun search(
+    override fun search(
         query: String,
         limit: Int,
-        currentData: PokemonListModel? = null
+        currentData: PokemonListModel?
     ): Flow<Result<PokemonListModel>> = flow {
         val key = toNoSpacesLowercaseKey(query)
 

@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
 
     implementation(libs.coil.compose)
+    implementation(libs.coil.svg)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
@@ -64,8 +65,10 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.material3)
     // register Hilt compiler with KSP
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Room
     implementation(libs.androidx.room.runtime)

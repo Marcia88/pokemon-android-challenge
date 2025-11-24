@@ -81,7 +81,10 @@ fun PokemonListScreen(
                     isLoadingMore = state.isLoadingMore,
                     onLoadMore = { viewModel.process(PokemonListIntent.LoadMore) },
                     getPokemonDetail = viewModel::getPokemonDetail,
-                    onItemClick = onItemClick,
+                    onItemClick = { detail ->
+                        viewModel.process(PokemonListIntent.UpdateQuery(""))
+                        onItemClick?.invoke(detail)
+                    },
                     floatingActionButton = {
                         PokeballFloatingActionButton(onClick = { onNavigateToFavorites?.invoke() })
                     }
